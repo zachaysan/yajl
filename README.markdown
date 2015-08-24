@@ -112,7 +112,7 @@ or like this:
 `/home/zach/logs/zach@Lux.yajl.log.1`
 
 If there are multiple running processes (just like the normal Ruby
-processor).
+logger).
 
 Note, it gets the name of the project from your Git project name.
 If you don't use Git let me know and I'll make this toggleable too.
