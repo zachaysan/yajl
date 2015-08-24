@@ -8,7 +8,7 @@ without screwing around, and I want to be able to easily log text.
 ## TODOs
 
 1. Tests. I guess. Maybe.
-2. Maybe rewrite this in [Nim](http://nim-lang.org/) and wrap itin the Ruby FFI. I'd have to be logging a *lot* to justify it though.
+2. Maybe rewrite this in [Nim](http://nim-lang.org/) and wrap it in the Ruby FFI. I'd have to be logging a *lot* to justify it though.
 3. Maybe make it Windows friendly. (Not sure how to handle newlines for Windows).
 
 ## Installation
