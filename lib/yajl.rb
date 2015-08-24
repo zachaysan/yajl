@@ -4,14 +4,19 @@ require "securerandom"
 
 require "yajl/version"
 
+class Logger::LogDevice
+  def add_log_header(file)
+  end
+end
+
 module Yajl
 
-  def create_logger(log_directory=nil)
+  def self.create_logger(log_directory=nil)
 
     log_directory ||= "~/logs"
 
     user = `whoami`.chomp
-    host = `hostname`.chomp
+    hostname = `hostname`.chomp
 
     project = `git rev-parse --show-toplevel`.chomp
     message = "logger only works within a git project"
@@ -21,9 +26,11 @@ module Yajl
 
     project = project.split("/")[-1]
 
-    logger = Logger.new("~/logs/#{user}@#{hostname}.#{project}.log")
+    filename = File.expand_path("~/logs/#{user}@#{hostname}.#{project}.log")
+    logger = Logger.new(filename)
+
     logger.level = Logger::INFO
-    Logger.formatter = proc do |severity, datetime, progname, message|
+    logger.formatter = proc do |severity, datetime, progname, message|
       id = SecureRandom.hex(16)
       message = {text: message} if message.is_a? String
       line = { id: id,
