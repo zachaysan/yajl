@@ -8,7 +8,8 @@ without screwing around, and I want to be able to easily log text.
 ## TODOs
 
 1. Tests. I guess. Maybe.
-2. Maybe rewrite this in [Nim](http://nim-lang.org/) and wrap it in the Ruby FFI. I'd have to be logging a *lot* to justify it though.
+2. Maybe rewrite this in [Nim](http://nim-lang.org/) and wrap itin the Ruby FFI. I'd have to be logging a *lot* to justify it though.
+3. Maybe make it Windows friendly. (Not sure how to handle newlines for Windows).
 
 ## Installation
 
@@ -101,7 +102,8 @@ Which sets the `progname` attribute.
 By default logs are stored in `~/logs` with a very sensible
 logger name. If even one person wants the ability to change the
 filename that is set I'll add the support to do so. Right now it
-looks like this:
+looks like this (Where `yajl` would be the name of whatever git
+repo you are using):
 
 `/home/zach/logs/zach@Lux.yajl.log`
 
@@ -110,7 +112,7 @@ or like this:
 `/home/zach/logs/zach@Lux.yajl.log.1`
 
 If there are multiple running processes (just like the normal Ruby
-processor.
+processor).
 
 Note, it gets the name of the project from your Git project name.
 If you don't use Git let me know and I'll make this toggleable too.
