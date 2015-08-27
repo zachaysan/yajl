@@ -4,9 +4,36 @@ require "securerandom"
 
 require "yajl/version"
 
-class Logger::LogDevice
+def project
+  result = `git rev-parse --show-toplevel`.chomp
+  message = "logger only works within a git project"
+  raise message if result == ""
+
+  result
+end
+
+class YajlLogger < Logger
+
+  %w{ warn info debug fatal error unknown }
+    .each do |method_name|
+    define_method(method_name) do |message|
+      sender = caller[0].split(":")[0]
+      path = sender.split("/")
+      project_depth = project.split("/").size
+
+      if path[0..project_depth-1].join("/") == project
+        path = path[project_depth..-1]
+      end
+
+      progname = path.join("/")
+      super(progname) { message }
+    end
+  end
+
+  # I don't want header lines
   def add_log_header(file)
   end
+
 end
 
 module Yajl
@@ -18,16 +45,11 @@ module Yajl
     user = `whoami`.chomp
     hostname = `hostname`.chomp
 
-    project = `git rev-parse --show-toplevel`.chomp
-    message = "logger only works within a git project"
-    raise message if project == ""
-
     `mkdir -p #{log_directory}`
+    project_name = project.split("/")[-1]
 
-    project = project.split("/")[-1]
-
-    filename = File.expand_path("~/logs/#{user}@#{hostname}.#{project}.log")
-    logger = Logger.new(filename)
+    filename = File.expand_path("#{log_directory}/#{user}@#{hostname}.#{project_name}.log")
+    logger = YajlLogger.new(filename)
 
     logger.level = Logger::INFO
     logger.formatter = proc do |severity, datetime, progname, message|
