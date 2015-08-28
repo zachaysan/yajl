@@ -4,6 +4,9 @@ Yet another JSON logger. I like Ruby's logger, but it's annoying to
 always set it up. I like flexible, machine and human readable logs.
 I want simplicity and brevity. I want to dump JSON in my logs
 without screwing around, and I want to be able to easily log text.
+I don't want to be constantly setting `progname`. I want to be able
+to override the right things (like progrname) but I also always want
+UTC and overriding id's is overkill.
 
 ## TODOs
 
@@ -29,6 +32,12 @@ Or install it yourself as:
 
 ## Usage
 
+Yajl relies on `git` to determine what the root filepath is.
+Since every single project that I have uses `git`, I decided
+to just make it mandatory.
+
+`cd [git repo] && irb`
+
 ```ruby
 require 'yajl'
 
@@ -44,12 +53,15 @@ Will produce the following
 	"id": "44fa7a8f0186092d849ac1ea263ceb3f",
 	"severity": "WARN",
 	"datetime": "2015-08-24 18:22:12 UTC",
-	"progname": null,
+	"progname": "(irb)",
 	"message": {
 		"text": "danger"
 	}
 }
 ```
+
+Note that progname is normally set from the context of the root
+git directory. E.g., `lib/yajl/version.rb`.
 
 You can also log data structures:
 
@@ -71,7 +83,7 @@ Which produces:
 		"banana_count": 2345,
 		"text": "So many bananas!"
 	},
-	"progname": null,
+	"progname": "(irb)",
 	"severity": "INFO"
 }
 ```
@@ -85,7 +97,7 @@ logger = Yajl.create_logger
 logger.fatal("deathstar") { "Nooooo" }
 ```
 
-Which sets the `progname` attribute.
+Which overrides the `progname` attribute.
 
 ```json
 {
