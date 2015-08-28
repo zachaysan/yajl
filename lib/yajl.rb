@@ -16,7 +16,10 @@ class YajlLogger < Logger
 
   %w{ warn info debug fatal error unknown }
     .each do |method_name|
-    define_method(method_name) do |message|
+    define_method(method_name) do |message, &block|
+
+      return super(message, &block) if block
+
       sender = caller[0].split(":")[0]
       path = sender.split("/")
       project_depth = project.split("/").size
@@ -40,16 +43,12 @@ module Yajl
 
   def self.create_logger(log_directory=nil)
 
-    log_directory ||= "~/logs"
-
-    user = `whoami`.chomp
-    hostname = `hostname`.chomp
-
-    `mkdir -p #{log_directory}`
-    project_name = project.split("/")[-1]
-
-    filename = File.expand_path("#{log_directory}/#{user}@#{hostname}.#{project_name}.log")
-    logger = YajlLogger.new(filename)
+    unless log_directory == STDOUT || log_directory == false
+      filename = Yajl.create_log_directory log_directory
+      logger = YajlLogger.new(filename)
+    else
+      logger = YajlLogger.new(STDOUT)
+    end
 
     logger.level = Logger::INFO
     logger.formatter = proc do |severity, datetime, progname, message|
@@ -66,4 +65,19 @@ module Yajl
     return logger
 
   end
+
+  def self.create_log_directory(log_directory)
+
+    log_directory ||= "~/logs"
+
+    user = `whoami`.chomp
+    hostname = `hostname`.chomp
+
+    `mkdir -p #{log_directory}`
+    project_name = project.split("/")[-1]
+
+    File.expand_path("#{log_directory}/#{user}@#{hostname}.#{project_name}.log")
+
+  end
+
 end
